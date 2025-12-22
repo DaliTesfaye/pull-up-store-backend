@@ -4,10 +4,3 @@ export interface UpdateProfileDTO {
   avatar?: string;
   phone?: string;
 }
-
-export interface signUpDTO {
-  firstName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}

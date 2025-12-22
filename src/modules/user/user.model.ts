@@ -4,6 +4,7 @@ import { UserSchema } from './user.schema';
 export interface IUser extends Document {
     email: string;
     password: string;
+    confirmPassword: string;
     accountStatus: 'VERIFIED' | 'UNVERIFIED';
     firstName?: string;
     lastName?: string;

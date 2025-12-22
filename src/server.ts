@@ -20,6 +20,11 @@ app.get("/", (req: Request, res: Response) => {
 import userRoutes from "./modules/user/user.routes";
 app.use("/api/users", userRoutes);
 
+//Import and use auth routes
+import authRoutes from "./modules/auth/auth.routes";
+app.use("/api/auth", authRoutes);
+
+
 
 const PORT = process.env.PORT || 5010;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
