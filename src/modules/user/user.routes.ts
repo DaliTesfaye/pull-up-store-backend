@@ -1,18 +1,13 @@
 import { Router } from "express";
-
 import { userController } from "./user.controller";
+import { authMiddleware } from "../../middelwares/auth.middleware";
 
 const router = Router();
 
-// Get User Profile
-router.get("/profile", userController.getProfile);
-router.get("/profile/:userId", userController.getProfile);
-// Update User Profile
-router.put("/profile", userController.updateProfile);
-router.put("/profile/:userId", userController.updateProfile);
-// Delete User Profile
-router.delete("/profile", userController.deleteProfile);
-router.delete("/profile/:userId", userController.deleteProfile);
+// Protected routes - require authentication
+router.get("/profile", authMiddleware, userController.getProfile);
+router.put("/profile", authMiddleware, userController.updateProfile);
+router.delete("/profile", authMiddleware, userController.deleteProfile);
 
 export default router;
 

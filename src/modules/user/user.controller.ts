@@ -1,16 +1,17 @@
 import { UserService } from "./user.service";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { UpdateProfileDTO } from "./user.types";
+import { AuthRequest } from "../../middelwares/auth.middleware";
 
 export class userController {
 
   // GET Profile
-  static async getProfile(req: Request, res: Response): Promise<void> {
+  static async getProfile(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const userId = (req.params as any).userId || (req.query as any).userId || (req.body as any).userId;
+      const userId = req.userId; // From JWT token
 
       if (!userId) {
-        res.status(400).json({ message: "userId is required" });
+        res.status(401).json({ message: "Unauthorized" });
         return;
       }
 
@@ -29,13 +30,13 @@ export class userController {
   }
 
   // UPDATE Profile
-  static async updateProfile(req: Request, res: Response): Promise<void> {
+  static async updateProfile(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const userId = (req.params as any).userId || (req.query as any).userId || (req.body as any).userId;
-      const updateData: UpdateProfileDTO = req.body as any;
+      const userId = req.userId; // From JWT token
+      const updateData: UpdateProfileDTO = req.body;
 
       if (!userId) {
-        res.status(400).json({ message: "userId is required" });
+        res.status(401).json({ message: "Unauthorized" });
         return;
       }
 
@@ -54,12 +55,12 @@ export class userController {
   }
 
   // DELETE Profile
-  static async deleteProfile(req: Request, res: Response): Promise<void> {
+  static async deleteProfile(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const userId = (req.params as any).userId || (req.query as any).userId || (req.body as any).userId;
+      const userId = req.userId; // From JWT token
 
       if (!userId) {
-        res.status(400).json({ message: "userId is required" });
+        res.status(401).json({ message: "Unauthorized" });
         return;
       }
 

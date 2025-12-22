@@ -18,5 +18,6 @@ export interface AuthResponse {
         lastName? : string ;
         email : string ;
         accountStatus : string;
-    }
+    };
+    token: string;
 }
