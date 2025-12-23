@@ -19,5 +19,25 @@ export interface AuthResponse {
         email : string ;
         accountStatus : string;
     };
-    token: string;
+    token?: string;
+}
+
+export interface VerifyEmailDTO {
+    email: string;
+    code: string;
+}
+
+export interface ResendVerificationDTO {
+    email: string;
+}
+
+export interface ForgotPasswordDTO {
+    email: string;
+}
+
+export interface ResetPasswordDTO {
+    email: string;
+    code: string;
+    newPassword: string;
+    confirmPassword: string;
 }

@@ -11,6 +11,10 @@ export interface IUser extends Document {
     avatar?: string;
     phone?: string;
     lastLogin?: Date;
+    verificationToken?: string;
+    verificationTokenExpiry?: Date;
+    resetPasswordToken?: string;
+    resetPasswordTokenExpiry?: Date;
     createdAt: Date;
     updatedAt: Date;
 }

@@ -51,6 +51,26 @@ export const UserSchema = new Schema(
     lastLogin: {
       type: Date,
     },
+
+    verificationToken: {
+      type: String,
+      select: false,
+    },
+
+    verificationTokenExpiry: {
+      type: Date,
+      select: false,
+    },
+
+    resetPasswordToken: {
+      type: String,
+      select: false,
+    },
+
+    resetPasswordTokenExpiry: {
+      type: Date,
+      select: false,
+    },
   },
   {
     timestamps: true,
