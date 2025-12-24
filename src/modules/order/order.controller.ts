@@ -20,6 +20,20 @@ export class OrderController {
       });
     } catch (error: any) {
       console.error("Error in createOrder:", error);
+      
+      // Handle validation errors
+      if (error.name === 'ValidationError') {
+        res.status(400).json({ message: "Invalid order data", error: error.message });
+        return;
+      }
+      
+      // Handle mongoose errors
+      if (error.name === 'MongoError' || error.name === 'MongoServerError') {
+        res.status(500).json({ message: "Database error occurred", error: error.message });
+        return;
+      }
+      
+      // Handle known business logic errors
       if (
         error.message.includes("empty") ||
         error.message.includes("not found") ||
@@ -29,7 +43,9 @@ export class OrderController {
         res.status(400).json({ message: error.message });
         return;
       }
-      res.status(500).json({ message: "Server error", error: error.message });
+      
+      // Handle all other errors
+      res.status(500).json({ message: "Failed to create order", error: error.message });
     }
   }
 

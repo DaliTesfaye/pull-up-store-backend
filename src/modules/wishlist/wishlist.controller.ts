@@ -41,6 +41,20 @@ export class WishlistController {
       });
     } catch (error: any) {
       console.error("Error in addToWishlist:", error);
+      
+      // Handle validation errors
+      if (error.name === 'ValidationError') {
+        res.status(400).json({ message: "Validation error", error: error.message });
+        return;
+      }
+      
+      // Handle duplicate key errors
+      if (error.code === 11000) {
+        res.status(400).json({ message: "Product already in wishlist" });
+        return;
+      }
+      
+      // Handle known business logic errors
       if (
         error.message.includes("not found") ||
         error.message.includes("not available") ||
@@ -50,7 +64,9 @@ export class WishlistController {
         res.status(400).json({ message: error.message });
         return;
       }
-      res.status(500).json({ message: "Server error", error: error.message });
+      
+      // Handle all other errors
+      res.status(500).json({ message: "Failed to add product to wishlist", error: error.message });
     }
   }
 

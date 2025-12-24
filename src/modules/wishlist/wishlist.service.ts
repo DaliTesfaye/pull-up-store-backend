@@ -16,11 +16,16 @@ export class WishlistService {
     // Populate wishlist items with product details
     const wishlistItems: WishlistItemResponse[] = [];
 
-    for (const item of wishlist.items) {
-      const product = await ProductModel.findById(item.productId);
+    // Fetch all products in a single query to avoid N+1 problem
+    const productIds = wishlist.items.map(item => item.productId);
+    const products = await ProductModel.find({ _id: { $in: productIds }, isActive: true });
+    const productMap = new Map(products.map(p => [p._id.toString(), p]));
 
-      // Skip if product deleted or inactive
-      if (!product || !product.isActive) continue;
+    for (const item of wishlist.items) {
+      const product = productMap.get(item.productId.toString());
+
+      // Skip if product not found or inactive
+      if (!product) continue;
 
       wishlistItems.push({
         productId: product._id.toString(),

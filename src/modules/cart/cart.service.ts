@@ -18,8 +18,13 @@ export class CartService {
     let totalPrice = 0;
     let totalItems = 0;
 
+    // Fetch all products in a single query to avoid N+1 problem
+    const productIds = cart.items.map(item => item.productId);
+    const products = await ProductModel.find({ _id: { $in: productIds } });
+    const productMap = new Map(products.map(p => [p._id.toString(), p]));
+
     for (const item of cart.items) {
-      const product = await ProductModel.findById(item.productId);
+      const product = productMap.get(item.productId.toString());
       
       if (!product) continue; // Skip if product deleted
 

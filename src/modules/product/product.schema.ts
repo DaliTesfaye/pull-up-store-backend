@@ -100,5 +100,5 @@ export const ProductSchema = new Schema(
   }
 );
 
-// Index for text search on name and description
+// Text index for search functionality
 ProductSchema.index({ name: "text", description: "text" });

@@ -41,6 +41,20 @@ export class CartController {
       });
     } catch (error: any) {
       console.error("Error in addToCart:", error);
+      
+      // Handle validation errors
+      if (error.name === 'ValidationError') {
+        res.status(400).json({ message: "Validation error", error: error.message });
+        return;
+      }
+      
+      // Handle cast errors (invalid ObjectId)
+      if (error.name === 'CastError') {
+        res.status(400).json({ message: "Invalid product ID format" });
+        return;
+      }
+      
+      // Handle known business logic errors
       if (
         error.message.includes("not found") ||
         error.message.includes("stock") ||
@@ -50,7 +64,9 @@ export class CartController {
         res.status(400).json({ message: error.message });
         return;
       }
-      res.status(500).json({ message: "Server error", error: error.message });
+      
+      // Handle all other errors
+      res.status(500).json({ message: "Failed to add item to cart", error: error.message });
     }
   }
 

@@ -17,11 +17,6 @@ export const UserSchema = new Schema(
       select: false,
     },
 
-    confirmPassword: {
-      type: String,
-      required: true,
-      select: false,
-    },
     accountStatus: {
       type: String,
       enum: ["VERIFIED", "UNVERIFIED"],

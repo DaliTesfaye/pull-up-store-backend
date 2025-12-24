@@ -27,7 +27,6 @@ export class AuthService {
 
     //Hash Password
     const hashedPassword = await hashPassword(password);
-    const hashedConfirmPassword = await hashPassword(confirmPassword);
 
     // Generate verification code and expiry
     const verificationCode = generateVerificationCode();
@@ -38,7 +37,6 @@ export class AuthService {
       firstName,
       email,
       password: hashedPassword,
-      confirmPassword: hashedConfirmPassword,
       accountStatus: "UNVERIFIED",
       verificationToken: verificationCode,
       verificationTokenExpiry: tokenExpiry,

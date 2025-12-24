@@ -42,8 +42,13 @@ export class OrderService {
     const orderItems = [];
     let totalAmount = 0;
 
+    // Fetch all products in a single query to avoid N+1 problem
+    const productIds = cart.items.map(item => item.productId);
+    const products = await ProductModel.find({ _id: { $in: productIds } });
+    const productMap = new Map(products.map(p => [p._id.toString(), p]));
+
     for (const cartItem of cart.items) {
-      const product = await ProductModel.findById(cartItem.productId);
+      const product = productMap.get(cartItem.productId.toString());
 
       if (!product) {
         throw new Error(`Product not found`);
@@ -93,17 +98,27 @@ export class OrderService {
 
     // Reduce stock for each item
     for (const item of orderItems) {
-      const product = await ProductModel.findById(item.productId);
-      if (product) {
-        const stockKey = `${item.size}-${item.color}`;
-        const currentStock = product.stock.get(stockKey) || 0;
+      const stockKey = `${item.size}-${item.color}`;
+      const productId = new mongoose.Types.ObjectId(item.productId);
+      
+      await ProductModel.updateOne(
+        { _id: productId },
+        {
+          $inc: {
+            [`stock.${stockKey}`]: -item.quantity,
+            totalStock: -item.quantity
+          }
+        }
+      );
+    }
 
-        product.stock.set(stockKey, currentStock - item.quantity);
-        product.totalStock -= item.quantity;
-        product.inStock = product.totalStock > 0;
-
-        await product.save();
-      }
+    // Update inStock status for products with zero stock
+    const productIdsToUpdate = orderItems.map(item => new mongoose.Types.ObjectId(item.productId));
+    const updatedProducts = await ProductModel.find({ _id: { $in: productIdsToUpdate } });
+    
+    for (const product of updatedProducts) {
+      product.inStock = product.totalStock > 0;
+      await product.save();
     }
 
     // Generate confirmation token
@@ -238,17 +253,21 @@ export class OrderService {
 
     // Restore stock for all items
     for (const item of order.items) {
-      const product = await ProductModel.findById(item.productId);
-      if (product) {
-        const stockKey = `${item.size}-${item.color}`;
-        const currentStock = product.stock.get(stockKey) || 0;
-
-        product.stock.set(stockKey, currentStock + item.quantity);
-        product.totalStock += item.quantity;
-        product.inStock = true;
-
-        await product.save();
-      }
+      const stockKey = `${item.size}-${item.color}`;
+      const productId = new mongoose.Types.ObjectId(item.productId);
+      
+      await ProductModel.updateOne(
+        { _id: productId },
+        {
+          $inc: {
+            [`stock.${stockKey}`]: item.quantity,
+            totalStock: item.quantity
+          },
+          $set: {
+            inStock: true
+          }
+        }
+      );
     }
 
     // Update order status
