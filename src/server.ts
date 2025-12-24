@@ -32,5 +32,9 @@ app.use("/api/products", productRoutes);
 import cartRoutes from "./modules/cart/cart.routes";
 app.use("/api/cart", cartRoutes);
 
+//Import and use wishlist routes
+import wishlistRoutes from "./modules/wishlist/wishlist.routes";
+app.use("/api/wishlist", wishlistRoutes);
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

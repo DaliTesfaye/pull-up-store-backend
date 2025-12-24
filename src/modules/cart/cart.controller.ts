@@ -14,10 +14,13 @@ export class CartController {
 
       const cartService = new CartService();
       const cart = await cartService.getCart(userId);
-      res.status(200).json(cart);
+      res.status(200).json({
+        message: "Cart retrieved successfully",
+        ...cart
+      });
     } catch (error: any) {
       console.error("Error in getCart:", error);
-      res.status(500).json({ message: "Server error" });
+      res.status(500).json({ message: "Server error", error: error.message });
     }
   }
 
@@ -32,18 +35,22 @@ export class CartController {
 
       const cartService = new CartService();
       const cart = await cartService.addToCart(userId, req.body);
-      res.status(200).json(cart);
+      res.status(200).json({
+        message: "Item added to cart successfully",
+        ...cart
+      });
     } catch (error: any) {
       console.error("Error in addToCart:", error);
       if (
         error.message.includes("not found") ||
         error.message.includes("stock") ||
-        error.message.includes("not available")
+        error.message.includes("not available") ||
+        error.message.includes("Invalid product ID")
       ) {
         res.status(400).json({ message: error.message });
         return;
       }
-      res.status(500).json({ message: "Server error" });
+      res.status(500).json({ message: "Server error", error: error.message });
     }
   }
 
@@ -59,18 +66,22 @@ export class CartController {
       const { productId, size, color } = req.params;
       const cartService = new CartService();
       const cart = await cartService.updateCartItem(userId, productId, size, color, req.body);
-      res.status(200).json(cart);
+      res.status(200).json({
+        message: "Cart item updated successfully",
+        ...cart
+      });
     } catch (error: any) {
       console.error("Error in updateCartItem:", error);
       if (
         error.message.includes("not found") ||
         error.message.includes("stock") ||
-        error.message.includes("Quantity")
+        error.message.includes("Quantity") ||
+        error.message.includes("Invalid product ID")
       ) {
         res.status(400).json({ message: error.message });
         return;
       }
-      res.status(500).json({ message: "Server error" });
+      res.status(500).json({ message: "Server error", error: error.message });
     }
   }
 
@@ -86,14 +97,17 @@ export class CartController {
       const { productId, size, color } = req.params;
       const cartService = new CartService();
       const cart = await cartService.removeFromCart(userId, productId, size, color);
-      res.status(200).json(cart);
+      res.status(200).json({
+        message: "Item removed from cart successfully",
+        ...cart
+      });
     } catch (error: any) {
       console.error("Error in removeFromCart:", error);
-      if (error.message.includes("not found")) {
+      if (error.message.includes("not found") || error.message.includes("Invalid product ID")) {
         res.status(400).json({ message: error.message });
         return;
       }
-      res.status(500).json({ message: "Server error" });
+      res.status(500).json({ message: "Server error", error: error.message });
     }
   }
 
@@ -108,10 +122,13 @@ export class CartController {
 
       const cartService = new CartService();
       const cart = await cartService.clearCart(userId);
-      res.status(200).json(cart);
+      res.status(200).json({
+        message: "Cart cleared successfully",
+        ...cart
+      });
     } catch (error: any) {
       console.error("Error in clearCart:", error);
-      res.status(500).json({ message: "Server error" });
+      res.status(500).json({ message: "Server error", error: error.message });
     }
   }
 }

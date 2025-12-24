@@ -1,6 +1,7 @@
 import { CartModel } from "./cart.model";
 import { ProductModel } from "../product/product.model";
 import { AddToCartDTO, UpdateCartItemDTO, CartResponse, CartItemResponse } from "./cart.types";
+import mongoose from "mongoose";
 
 export class CartService {
   // Get user's cart with full product details
@@ -54,6 +55,11 @@ export class CartService {
   // Add item to cart or update quantity if exists
   async addToCart(userId: string, data: AddToCartDTO): Promise<CartResponse> {
     const { productId, size, color, quantity } = data;
+
+    // Validate productId format
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      throw new Error("Invalid product ID format");
+    }
 
     // Validate product exists
     const product = await ProductModel.findById(productId);
@@ -123,6 +129,11 @@ export class CartService {
   ): Promise<CartResponse> {
     const { quantity } = data;
 
+    // Validate productId format
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      throw new Error("Invalid product ID format");
+    }
+
     if (quantity < 1) {
       throw new Error("Quantity must be at least 1");
     }
@@ -161,6 +172,11 @@ export class CartService {
 
   // Remove item from cart
   async removeFromCart(userId: string, productId: string, size: string, color: string): Promise<CartResponse> {
+    // Validate productId format
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      throw new Error("Invalid product ID format");
+    }
+
     const cart = await CartModel.findOne({ userId });
     if (!cart) {
       throw new Error("Cart not found");

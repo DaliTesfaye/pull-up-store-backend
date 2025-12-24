@@ -31,7 +31,6 @@ export const CartSchema = new Schema(
       ref: "User",
       required: true,
       unique: true,
-      index: true,
     },
     items: {
       type: [cartItemSchema],

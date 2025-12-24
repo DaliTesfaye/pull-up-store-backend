@@ -22,6 +22,7 @@ export interface CartItemResponse {
 }
 
 export interface CartResponse {
+    message?: string;
     items : CartItemResponse[];
     totalItems: number;
     totalPrice: number;
