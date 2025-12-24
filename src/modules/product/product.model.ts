@@ -1,14 +1,6 @@
 import { Document, model } from "mongoose";
 import { ProductSchema } from "./product.schema";
 
-export interface IVariant {
-  _id: string;
-  size: string;
-  color: string;
-  stock: number;
-  sku: string;
-}
-
 export interface IProduct extends Document {
   name: string;
   description: string;
@@ -16,7 +8,11 @@ export interface IProduct extends Document {
   compareAtPrice?: number;
   category: "sweaters" | "jackets" | "pants" | "hoodies";
   images: string[];
-  variants: IVariant[];
+  sizes: string[];
+  colors: string[];
+  stock: Map<string, number>;
+  totalStock: number;
+  inStock: boolean;
   isActive: boolean;
   rating: {
     average: number;
