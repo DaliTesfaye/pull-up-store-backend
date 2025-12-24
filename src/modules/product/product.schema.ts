@@ -1,33 +1,5 @@
 import { Schema } from "mongoose";
 
-const VariantSchema = new Schema(
-  {
-    size: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    color: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    stock: {
-      type: Number,
-      required: true,
-      min: 0,
-      default: 0,
-    },
-    sku: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
-  },
-  { _id: true }
-);
-
 export const ProductSchema = new Schema(
   {
     name: {
@@ -73,15 +45,33 @@ export const ProductSchema = new Schema(
       },
     },
 
-    variants: {
-      type: [VariantSchema],
+    sizes: {
+      type: [String],
+      required: true,
       default: [],
-      validate: {
-        validator: function (v: any[]) {
-          return v.length > 0;
-        },
-        message: "At least one variant is required",
-      },
+    },
+
+    colors: {
+      type: [String],
+      required: true,
+      default: [],
+    },
+
+    // Stock tracking: { "M-Black": 10, "L-Blue": 5 }
+    stock: {
+      type: Map,
+      of: Number,
+      default: {},
+    },
+
+    totalStock: {
+      type: Number,
+      default: 0,
+    },
+
+    inStock: {
+      type: Boolean,
+      default: true,
     },
 
     isActive: {

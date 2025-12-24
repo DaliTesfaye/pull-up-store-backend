@@ -58,12 +58,25 @@ export class ProductService {
       ProductModel.countDocuments(filter),
     ]);
 
-    // Transform products to add isOutOfStock field
+    // Transform products - convert Map to plain object if needed
     const transformedProducts: ProductResponse[] = products.map((product: any) => {
-      const totalStock = product.variants.reduce((sum: number, variant: any) => sum + variant.stock, 0);
+      let stockObj = {};
+      if (product.stock) {
+        // Check if it's already a plain object or a Map
+        if (product.stock instanceof Map) {
+          stockObj = Object.fromEntries(product.stock);
+        } else if (typeof product.stock === 'object') {
+          stockObj = product.stock;
+        }
+      }
+      
       return {
         ...product,
-        isOutOfStock: totalStock === 0,
+        stock: stockObj,
+        sizes: product.sizes || [],
+        colors: product.colors || [],
+        totalStock: product.totalStock || 0,
+        inStock: product.inStock !== undefined ? product.inStock : true,
       };
     });
 
@@ -89,12 +102,23 @@ export class ProductService {
       throw new Error("Product not found");
     }
 
-    // Calculate total stock across all variants
-    const totalStock = product.variants.reduce((sum: number, variant: any) => sum + variant.stock, 0);
+    // Convert Map to plain object if needed
+    let stockObj = {};
+    if (product.stock) {
+      if (product.stock instanceof Map) {
+        stockObj = Object.fromEntries(product.stock);
+      } else if (typeof product.stock === 'object') {
+        stockObj = product.stock;
+      }
+    }
 
     return {
       ...product,
-      isOutOfStock: totalStock === 0,
+      stock: stockObj,
+      sizes: product.sizes || [],
+      colors: product.colors || [],
+      totalStock: product.totalStock || 0,
+      inStock: product.inStock !== undefined ? product.inStock : true,
     };
   }
 }

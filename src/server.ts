@@ -28,5 +28,9 @@ app.use("/api/auth", authRoutes);
 import productRoutes from "./modules/product/product.routes";
 app.use("/api/products", productRoutes);
 
+//Import and use cart routes
+import cartRoutes from "./modules/cart/cart.routes";
+app.use("/api/cart", cartRoutes);
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

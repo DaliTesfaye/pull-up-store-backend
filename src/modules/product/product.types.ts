@@ -9,14 +9,6 @@ export interface GetProductsQuery {
   sortOrder?: "asc" | "desc";
 }
 
-export interface VariantResponse {
-  _id: string;
-  size: string;
-  color: string;
-  stock: number;
-  sku: string;
-}
-
 export interface ProductResponse {
   _id: string;
   name: string;
@@ -25,9 +17,12 @@ export interface ProductResponse {
   compareAtPrice?: number;
   category: string;
   images: string[];
-  variants: VariantResponse[];
+  sizes: string[];
+  colors: string[];
+  stock: { [key: string]: number };
+  totalStock: number;
+  inStock: boolean;
   isActive: boolean;
-  isOutOfStock: boolean;
   rating: {
     average: number;
     count: number;
